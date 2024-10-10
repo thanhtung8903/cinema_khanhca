@@ -56,7 +56,7 @@ public partial class Shows : Window
     private void btnAddShow_OnClick(object sender, RoutedEventArgs e)
     {
         int roomId = (int)cmbRoom.SelectedValue;
-        int slot = int.Parse(txtSlot.Text);
+        int slot = int.Parse(cmbSlot.Text);
         DateOnly showDate = DateOnly.Parse(dpShowDate.Text);  // Parse the date from the text box
     
         // Extract the date part for comparison
@@ -71,13 +71,32 @@ public partial class Shows : Window
             return;
         }
 
+        bool? status = null;  // Nullable boolean to handle True, False, or Null
+
+        if (cmbStatus.SelectedItem != null)
+        {
+            string selectedStatus = ((ComboBoxItem)cmbStatus.SelectedItem).Content.ToString();
+            if (selectedStatus == "True")
+            {
+                status = true;
+            }
+            else if (selectedStatus == "False")
+            {
+                status = false;
+            }
+            else
+            {
+                status = null;  // Handle "Null" status
+            }
+        }
+        
         Show show = new Show
         {
             RoomId = roomId,
             FilmId = (int)cmbFilm.SelectedValue,
             ShowDate = showDate,  // Ensure this is a DateTime
             Price = decimal.Parse(txtPrice.Text),
-            Status = txtStatus.Text == "1" ? true : false,
+            Status = status,
             Slot = slot
         };
         db.Shows.Add(show);
@@ -88,7 +107,7 @@ public partial class Shows : Window
     private void btnUpdateShow_OnClick(object sender, RoutedEventArgs e)
     {
         int roomId = (int)cmbRoom.SelectedValue;
-        int slot = int.Parse(txtSlot.Text);
+        int slot = int.Parse(cmbSlot.Text);
         DateOnly showDate = DateOnly.Parse(dpShowDate.Text);  // Parse the date from the text box
     
         // Extract the date part for comparison
@@ -97,10 +116,30 @@ public partial class Shows : Window
                                  && s.Slot == slot 
                                  && s.ShowDate == showDate);
 
-        if (existingShow != null)
+        if (existingShow != null && existingShow.ShowId != int.Parse(txtShowID.Text))
         {
             MessageBox.Show("A show with the same Room, Slot, and Date already exists.");
             return;
+        }
+        
+        bool? status = null;  // Nullable boolean to handle True, False, or Null
+
+// Check the selected status
+        if (cmbStatus.SelectedItem != null)
+        {
+            string selectedStatus = ((ComboBoxItem)cmbStatus.SelectedItem).Content.ToString();
+            if (selectedStatus == "True")
+            {
+                status = true;
+            }
+            else if (selectedStatus == "False")
+            {
+                status = false;
+            }
+            else
+            {
+                status = null;  // Handle "Null" status
+            }
         }
         
         int id = int.Parse(txtShowID.Text);
@@ -109,7 +148,7 @@ public partial class Shows : Window
         show.FilmId = (int)cmbFilm.SelectedValue;
         show.ShowDate = showDate;  // Ensure this is a DateTime
         show.Price = decimal.Parse(txtPrice.Text);
-        show.Status = txtStatus.Text == "1" ? true : false;
+        show.Status = status;
         show.Slot = slot;
         db.SaveChanges();
         loadData();
@@ -173,8 +212,8 @@ public partial class Shows : Window
             cmbRoom.Text = selectedShow.GetType().GetProperty("Room")?.GetValue(selectedShow, null)?.ToString();
             dpShowDate.Text = selectedShow.GetType().GetProperty("ShowDate")?.GetValue(selectedShow, null)?.ToString();
             txtPrice.Text = selectedShow.GetType().GetProperty("Price")?.GetValue(selectedShow, null)?.ToString();
-            txtStatus.Text = selectedShow.GetType().GetProperty("Status")?.GetValue(selectedShow, null)?.ToString();
-            txtSlot.Text = selectedShow.GetType().GetProperty("Slot")?.GetValue(selectedShow, null)?.ToString();
+            cmbStatus.Text = selectedShow.GetType().GetProperty("Status")?.GetValue(selectedShow, null)?.ToString();
+            cmbSlot.Text = selectedShow.GetType().GetProperty("Slot")?.GetValue(selectedShow, null)?.ToString();
         }
     }
 }
