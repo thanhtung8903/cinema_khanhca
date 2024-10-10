@@ -1,0 +1,29 @@
+﻿<Window x:Class="SE1853_FirstWPF.CountryWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SE1853_FirstWPF"
+        mc:Ignorable="d"
+        Title="CountryWindow" Height="450" Width="800">
+    <Grid Background="LightBlue">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0">
+            <Label Content="Country code:"></Label>
+            <TextBox x:Name="txtCountryCode"></TextBox>
+            <Label Content="Country name:"></Label>
+            <TextBox x:Name="txtCountryName"></TextBox>
+            <ComboBox Name="cboCountryCode" SelectionChanged="cboCountryCode_SelectionChanged"></ComboBox>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="20">
+                <Button x:Name="btnAdd"  Content="Add" Width="100" Click="btnAdd_Click"></Button>
+                <Button x:Name="btnEdit" Content="Edit" Width="100" Click="btnEdit_Click"></Button>
+                <Button x:Name="btnDelete" Content="Delete" Width="100" Click="btnDelete_Click"></Button>
+            </StackPanel>
+        </StackPanel>
+        <DataGrid Grid.Row="1" x:Name="dgCountries" SelectionChanged="dgCountries_SelectionChanged"></DataGrid>
+        
+    </Grid>
+</Window>

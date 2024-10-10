@@ -1,0 +1,49 @@
+﻿<Window x:Class="SE1853_FirstWPF.Shows"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:SE1853_FirstWPF"
+        mc:Ignorable="d"
+        Title="Shows" Height="720" Width="900"
+        WindowStartupLocation="CenterScreen"
+        >
+    <Grid>
+        <StackPanel>
+            
+            <DataGrid x:Name="dgShows" Height="300" Margin="5" SelectionChanged="dgShows_SelectionChanged"
+                      AutoGenerateColumns="False" CanUserAddRows="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Show ID" Binding="{Binding ID}" Width="*" />
+                    <DataGridTextColumn Header="Room" Binding="{Binding Room}" Width="*"/>
+                    <DataGridTextColumn Header="Film" Binding="{Binding Film}" Width="*"/>
+                    <DataGridTextColumn Header="Show Date" Binding="{Binding ShowDate}" Width="*"/>
+                    <DataGridTextColumn Header="Price" Binding="{Binding Price}" Width="*"/>
+                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="*"/>
+                    <DataGridTextColumn Header="Slot" Binding="{Binding Slot}" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+            <Label Content="Show ID:"></Label>
+            <TextBox x:Name="txtShowID" IsReadOnly="True"></TextBox>
+            <Label Content="Room:"></Label>
+            <ComboBox x:Name="cmbRoom" DisplayMemberPath="Name" SelectedValuePath="RoomID"></ComboBox>
+            <Label Content="Film:"></Label>
+            <ComboBox x:Name="cmbFilm" DisplayMemberPath="Title" SelectedValuePath="FilmID"></ComboBox>
+            <Label Content="Show Date:"></Label>
+            <DatePicker x:Name="dpShowDate" SelectedDateFormat="Short"></DatePicker>
+            <Label Content="Price:"></Label>
+            <TextBox x:Name="txtPrice"></TextBox>
+            <Label Content="Status:"></Label>
+            <TextBox x:Name="txtStatus"></TextBox>
+            <Label Content="Slot:"></Label>
+            <TextBox x:Name="txtSlot"></TextBox>
+
+            <WrapPanel HorizontalAlignment="Center">
+                <Button x:Name="btnAddShow" Content="Add Show" Width="100" Margin="5" Click="btnAddShow_OnClick"></Button>
+                <Button x:Name="btnUpdateShow" Content="Update Show" Width="100" Margin="5" Click="btnUpdateShow_OnClick"></Button>
+                <Button x:Name="btnSearchShow" Content="Search Show" Width="100" Margin="5" Click="btnSearchShow_OnClick"></Button>
+                <Button x:Name="btnDeleteShow" Content="Delete Show" Width="100" Margin="5" Click="btnDeleteShow_OnClick"></Button>
+            </WrapPanel>
+        </StackPanel>
+    </Grid>
+</Window>
