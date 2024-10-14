@@ -30,7 +30,7 @@
             <Label Content="Year:"></Label>
             <TextBox x:Name="txtYear"></TextBox>
             <Label Content="CountryCode:"></Label>
-            <TextBox x:Name="txtCountry"></TextBox>
+            <ComboBox x:Name="cmbCountry"></ComboBox>
             <Label Content="FilmUri:"></Label>
             <TextBox x:Name="txtUri"></TextBox>
 

@@ -11,6 +11,7 @@ namespace SE1853_FirstWPF
             InitializeComponent();
             loadData();
             loadGenres();
+            loadCountry();
         }
 
         private void txtUri_TextChanged(object sender, TextChangedEventArgs e)
@@ -30,6 +31,14 @@ namespace SE1853_FirstWPF
             cmbGenre.ItemsSource = genres;
             cmbGenre.DisplayMemberPath = "Name";
             cmbGenre.SelectedValuePath = "GenreId";
+        }
+
+        private void loadCountry()
+        {
+            var countries = db.Countries.ToList();
+            cmbCountry.ItemsSource = countries;
+            cmbCountry.DisplayMemberPath = "CountryCode";
+            cmbCountry.SelectedValuePath = "CountryCode";
         }
 
         public void loadData()
@@ -67,7 +76,7 @@ namespace SE1853_FirstWPF
                 txtID.Text = selectedFilm.GetType().GetProperty("ID")?.GetValue(selectedFilm, null)?.ToString();
                 txtTitle.Text = selectedFilm.GetType().GetProperty("Title")?.GetValue(selectedFilm, null)?.ToString();
                 txtYear.Text = selectedFilm.GetType().GetProperty("Year")?.GetValue(selectedFilm, null)?.ToString();
-                txtCountry.Text = selectedFilm.GetType().GetProperty("CountryCode")?.GetValue(selectedFilm, null)
+                cmbCountry.Text = selectedFilm.GetType().GetProperty("CountryCode")?.GetValue(selectedFilm, null)
                     ?.ToString();
                 cmbGenre.Text = selectedFilm.GetType().GetProperty("Genre")?.GetValue(selectedFilm, null)?.ToString();
                 txtUri.Text = selectedFilm.GetType().GetProperty("FilmUri")?.GetValue(selectedFilm, null)?.ToString();
@@ -90,7 +99,7 @@ namespace SE1853_FirstWPF
             Film film = new Film();
             film.Title = txtTitle.Text;
             film.Year = int.Parse(txtYear.Text);
-            film.CountryCode = txtCountry.Text;
+            film.CountryCode = cmbCountry.Text;
             film.GenreId = (int)cmbGenre.SelectedValue;
             film.FilmUrl = txtUri.Text;
             db.Films.Add(film);
@@ -135,7 +144,7 @@ namespace SE1853_FirstWPF
             var film = db.Films.Find(id);
             film.Title = txtTitle.Text;
             film.Year = int.Parse(txtYear.Text);
-            film.CountryCode = txtCountry.Text;
+            film.CountryCode = cmbCountry.Text;
             film.GenreId = (int)cmbGenre.SelectedValue;
             film.FilmUrl = txtUri.Text;
             db.SaveChanges();
