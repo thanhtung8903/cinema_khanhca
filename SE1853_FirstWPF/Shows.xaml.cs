@@ -9,13 +9,20 @@ public partial class Shows : Window
     public Shows()
     {
         InitializeComponent();
-        loadData();
+        // loadData();
         loadRooms();
         loadFilms();
+        loadToday();
     }
     
     CinemaContext db = new CinemaContext();
 
+    private void loadToday()
+    {
+        DateOnly today = DateOnly.FromDateTime(DateTime.Now);
+        dpShowDate.Text = today.ToString();
+    }
+    
     private void loadRooms()
     {
         var rooms = db.Rooms.ToList();
@@ -27,9 +34,6 @@ public partial class Shows : Window
     private void loadFilms()
     {
         var films = db.Films.ToList();
-        cmbFilm.ItemsSource = films;
-        cmbFilm.DisplayMemberPath = "Title";
-        cmbFilm.SelectedValuePath = "FilmId";
     }
     
     public void loadData()
@@ -53,109 +57,17 @@ public partial class Shows : Window
         dgShows.ItemsSource = data2;
     }
     
-    private void btnAddShow_OnClick(object sender, RoutedEventArgs e)
-    {
-        int roomId = (int)cmbRoom.SelectedValue;
-        int slot = int.Parse(cmbSlot.Text);
-        DateOnly showDate = DateOnly.Parse(dpShowDate.Text);  // Parse the date from the text box
-    
-        // Extract the date part for comparison
-        var existingShow = db.Shows
-            .FirstOrDefault(s => s.RoomId == roomId 
-                                 && s.Slot == slot 
-                                 && s.ShowDate == showDate);
 
-        if (existingShow != null)
-        {
-            MessageBox.Show("A show with the same Room, Slot, and Date already exists.");
-            return;
-        }
-
-        bool? status = null;  // Nullable boolean to handle True, False, or Null
-
-        if (cmbStatus.SelectedItem != null)
-        {
-            string selectedStatus = ((ComboBoxItem)cmbStatus.SelectedItem).Content.ToString();
-            if (selectedStatus == "True")
-            {
-                status = true;
-            }
-            else if (selectedStatus == "False")
-            {
-                status = false;
-            }
-            else
-            {
-                status = null;  // Handle "Null" status
-            }
-        }
-        
-        Show show = new Show
-        {
-            RoomId = roomId,
-            FilmId = (int)cmbFilm.SelectedValue,
-            ShowDate = showDate,  // Ensure this is a DateTime
-            Price = decimal.Parse(txtPrice.Text),
-            Status = status,
-            Slot = slot
-        };
-        db.Shows.Add(show);
-        db.SaveChanges();
-        loadData();
-    }
-
-    private void btnUpdateShow_OnClick(object sender, RoutedEventArgs e)
-    {
-        int roomId = (int)cmbRoom.SelectedValue;
-        int slot = int.Parse(cmbSlot.Text);
-        DateOnly showDate = DateOnly.Parse(dpShowDate.Text);  // Parse the date from the text box
-    
-        // Extract the date part for comparison
-        var existingShow = db.Shows
-            .FirstOrDefault(s => s.RoomId == roomId 
-                                 && s.Slot == slot 
-                                 && s.ShowDate == showDate);
-
-        if (existingShow != null && existingShow.ShowId != int.Parse(txtShowID.Text))
-        {
-            MessageBox.Show("A show with the same Room, Slot, and Date already exists.");
-            return;
-        }
-        
-        bool? status = null;  // Nullable boolean to handle True, False, or Null
-
-// Check the selected status
-        if (cmbStatus.SelectedItem != null)
-        {
-            string selectedStatus = ((ComboBoxItem)cmbStatus.SelectedItem).Content.ToString();
-            if (selectedStatus == "True")
-            {
-                status = true;
-            }
-            else if (selectedStatus == "False")
-            {
-                status = false;
-            }
-            else
-            {
-                status = null;  // Handle "Null" status
-            }
-        }
-        
-        int id = int.Parse(txtShowID.Text);
-        var show = db.Shows.Find(id);
-        show.RoomId = roomId;
-        show.FilmId = (int)cmbFilm.SelectedValue;
-        show.ShowDate = showDate;  // Ensure this is a DateTime
-        show.Price = decimal.Parse(txtPrice.Text);
-        show.Status = status;
-        show.Slot = slot;
-        db.SaveChanges();
-        loadData();
-    }
 
     private void btnSearchShow_OnClick(object sender, RoutedEventArgs e)
     {
+        if (cmbRoom.SelectedValue == null || string.IsNullOrEmpty(dpShowDate.Text))
+        {
+            MessageBox.Show("Please select a room and date");
+            return;
+        }
+        
+        
         //search by Show Date and the selected Room
         int roomId = (int)cmbRoom.SelectedValue;
         DateOnly showDate = DateOnly.Parse(dpShowDate.Text);  // Parse the date from the text box
@@ -192,7 +104,6 @@ public partial class Shows : Window
         var show = db.Shows.Find(id);
         db.Shows.Remove(show);
         db.SaveChanges();
-        loadData();
     }
 
     private void dgShows_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -208,12 +119,41 @@ public partial class Shows : Window
         if (selectedShow != null)
         {
             txtShowID.Text = selectedShow.GetType().GetProperty("ID")?.GetValue(selectedShow, null)?.ToString();
-            cmbFilm.Text = selectedShow.GetType().GetProperty("Film")?.GetValue(selectedShow, null)?.ToString();
             cmbRoom.Text = selectedShow.GetType().GetProperty("Room")?.GetValue(selectedShow, null)?.ToString();
             dpShowDate.Text = selectedShow.GetType().GetProperty("ShowDate")?.GetValue(selectedShow, null)?.ToString();
-            txtPrice.Text = selectedShow.GetType().GetProperty("Price")?.GetValue(selectedShow, null)?.ToString();
-            cmbStatus.Text = selectedShow.GetType().GetProperty("Status")?.GetValue(selectedShow, null)?.ToString();
-            cmbSlot.Text = selectedShow.GetType().GetProperty("Slot")?.GetValue(selectedShow, null)?.ToString();
         }
+    }
+
+    private void BtnAddShow_OnClick(object sender, RoutedEventArgs e)
+    {
+        if (cmbRoom.SelectedValue == null || string.IsNullOrEmpty(dpShowDate.Text))
+        {
+            MessageBox.Show("Please select a room and date");
+            return;
+        }
+
+        int roomId = (int)cmbRoom.SelectedValue;
+        DateOnly showDate = DateOnly.Parse(dpShowDate.Text);
+
+        //open the add show window and pass the selected room and date
+        AddShows addShow = new AddShows(roomId, showDate);
+        addShow.ShowDialog();
+    }
+
+    private void BtnUpdateShow_OnClick(object sender, RoutedEventArgs e)
+    {
+        if (cmbRoom.SelectedValue == null || string.IsNullOrEmpty(dpShowDate.Text))
+        {
+            MessageBox.Show("Please select a room and date");
+            return;
+        }
+
+        int roomId = (int)cmbRoom.SelectedValue;
+        DateOnly showDate = DateOnly.Parse(dpShowDate.Text);
+        int showId = int.Parse(txtShowID.Text);
+
+        //open the add show window and pass the selected room and date
+        UpdateShows addShow = new UpdateShows(showId, roomId, showDate);
+        addShow.ShowDialog();
     }
 }
